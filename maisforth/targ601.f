@@ -1875,7 +1875,7 @@ CODE COLD ( ? -- )   \ cold start Forth system (AN) 2004
  !HIMEM  !TOPNFA 0 TO CS#
  SAFE-THERE DROP
  FRESH DEFINITIONS
- 7F !USART
+ 95 !USART
  CR 0 .MSG
  CR ." Copyright (c) 2005 HCC Forth-gg"
  CR ." System09 port by Hans Huebner"
