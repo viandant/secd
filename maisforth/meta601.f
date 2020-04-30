@@ -707,8 +707,8 @@ ONLY:
  LABEL: THINGUMAJIG
 
 META
-HX B000 CONSTANT ACIA-CONTROL   \ : ACIA-CONTROL X ) ;
-HX B001 CONSTANT ACIA-DATA      \ : ACIA-DATA    X 1 #) ;
+HX B000 CONSTANT ACIA-CONTROL1
+HX B002 CONSTANT ACIA-CONTROL2
 FORTH
 
 \ Voor de assembler in de target Forth ================
@@ -777,6 +777,7 @@ FORTH DEFINITIONS
          CREATE DOMETA: ' DUP ,
          ['] ;;;MAIS;;; =
   UNTIL  DEFINITIONS ;
+
 
 \ Wil je iets veranderen? LET OP:
 \ Begin op iedere regel met een META-naam en een FORTH-woord,
@@ -889,8 +890,8 @@ META-WORDS:
   OVER       OVER
   OR         OR 
   RSHIFT     RSHIFT
-  ACIA-CONTROL ACIA-CONTROL   ( -- targa )
-  ACIA-DATA    ACIA-DATA ( -- targa )
+  ACIA-CONTROL1 ACIA-CONTROL1   ( -- targa )
+  ACIA-CONTROL2 ACIA-CONTROL2   ( -- targa )
   ;;;MAIS;;;   ;;;MAIS;;;
 
 \  (JMP)      (JMP)        ( -- hosta )

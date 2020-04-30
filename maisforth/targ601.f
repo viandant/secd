@@ -2,7 +2,7 @@
 
 \ MAIS AN601 TARGET CODE -- Albert Nijhof -- 06jun2005
 
-HX 65 TO USERBYTES
+HX 67 TO USERBYTES
 
 \ HX 2000 TO ORIGINTARGA
 NOTRACE
@@ -131,7 +131,6 @@ I-DATA       \ Space reservation for cold users values ttt See USERBYTES in META
  
 
 \ ----- 02 ----- doers
-
 FORTH:
 CODE EXECUTE   D X TFR   REG D PULS   X ) JMP   END-CODE
 CODE EXIT      REG Y PULU   NEXT END-CODE
@@ -166,9 +165,13 @@ DOERCODE DOVARS   ASLB  ROLA   S )++ ADDD   NEXT END-CODE   \ SWAP CELLS +
 \ Input and output for the MAIS board. (FvdM) 2003 ttt
 TRACE
 FORTH:
+ACIA-CONTROL1 CONSTANT ACIA-CONTROL1
+ACIA-CONTROL2 CONSTANT ACIA-CONTROL2
+ACIA-CONTROL1 IVAR CURRENTACIA
 CODE EMIT?   ( -- flag )
     REG D PSHS
-    ACIA-CONTROL LDA
+    ['] CURRENTACIA HOSTA >BODY @ LDX
+    X ) LDA
     CLRB
     \ ACIA-CONTROL C@ 2 AND 2 =
     2 # ANDA
@@ -180,7 +183,7 @@ CODE EMIT?   ( -- flag )
 
 INSIDE:
 CODE (EMIT   ( char -- )
-    ACIA-CONTROL # LDX
+    ['] CURRENTACIA HOSTA >BODY @ LDX 
     \ ACIA-CONTROL C@ 2 AND UNTIL
     BEGIN
         X ) LDA
@@ -194,8 +197,8 @@ CODE (EMIT   ( char -- )
 EXTRA:
 CODE !USART ( baudbyte -- )   \ Set up on-board i/o, See COLD
     \ Fixed at 9600/8/n/1
-    ACIA-CONTROL # LDX
-    55 # LDA
+    ACIA-CONTROL2 # LDX
+    HX 95 # LDA
     X ) STA
     REG D PULS
     NEXT  END-CODE
@@ -204,7 +207,8 @@ FORTH:
 CODE KEY? ( -- flag )
     \ ACIA-CONTROL C@ 1 AND 1 =
     REG D PSHS
-    ACIA-CONTROL LDA
+    ['] CURRENTACIA HOSTA >BODY @ LDX
+    X ) LDA
     CLRB
     1 # ANDA
     =? NO IF
@@ -215,7 +219,7 @@ CODE KEY? ( -- flag )
 
 CODE KEY ( -- char )
     REG D PSHS
-    ACIA-CONTROL # LDX
+    ['] CURRENTACIA HOSTA >BODY @ LDX 
     \ ACIA-CONTROL C@ 1 AND UNTIL
     BEGIN
         X ) LDB
@@ -942,6 +946,14 @@ CODE /STRING ( a n i -- a+i n-i )   \ (AN) 2004
   S ) LDD   S ) STX          \ n->D i->S)
   S )++ SUBD                 \ n-i
   NEXT END-CODE
+
+EXTRA:
+: ACIA1
+    ACIA-CONTROL1 CURRENTACIA !
+;
+: ACIA2
+    ACIA-CONTROL2 CURRENTACIA !
+;
 
 \ ----- 10 -----
 
@@ -1879,6 +1891,7 @@ CODE COLD ( ? -- )   \ cold start Forth system (AN) 2004
  CR 0 .MSG
  CR ." Copyright (c) 2005 HCC Forth-gg"
  CR ." System09 port by Hans Huebner"
+ CR ." Multicomp port by Viandant"
  CR HIMEM 0A RSHIFT  9 .R ."  kB RAM"
  CR CR QUIT [
 
@@ -2173,7 +2186,6 @@ ASSEMBLER:
 : REPEAT ( cs: whileadr 6 beginadr 7 -- )   AGAIN THEN ;
 : WHILE  ( cond# cs: adr n -- whileadr 6 adr n )   IF 1 CS-ROLL ;
 : NEXT  Y )++ [] JMP ;   \ 6809 Direct Threaded Code
-
 
 \ ----- 20 -----
 \ THROW messages
