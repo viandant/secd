@@ -108,7 +108,7 @@ architecture my_control_unit of control_unit is
     set_next_mpc : process(phi_next)
     begin
       if falling_edge(phi_next) then
-        next_mpc <= next_mpc + "000000001";
+        next_mpc <= mpc + "000000001";
       end if;
     end process;
 
