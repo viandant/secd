@@ -17,4 +17,5 @@
                  (:file "secd-defs" :depends-on ("packages"))
                  (:file "tools" :depends-on ("packages"))
                  (:file "microcode" :depends-on ("tools" "secd-defs"))
-                 (:file "secd-ram" :depends-on ("tools" "secd-defs"))))
+                 (:file "secd-ram" :depends-on ("tools" "secd-defs"))
+					  (:file "secd-shared" :depends-on ("secd-ram"))))
