@@ -29,7 +29,7 @@
 		(out output-pathname
 			  :direction :output
 			  :if-exists :supersede
-			  :element-type '(unsigned-byte 32))
+			  :element-type '(unsigned-byte 64))
 	 (map
 	  nil
 	  (lambda (mw)
