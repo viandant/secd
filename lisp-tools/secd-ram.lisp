@@ -28,7 +28,8 @@
 
 ;; XXX type 1 not used?
 
-(defun make-binary (mw)
+(defmethod make-binary ((mw integer)) mw)
+(defmethod make-binary ((mw memory-word))
   (ecase (mw-type mw)
     (cons (dpb (mw-car mw) (byte 14 14) (mw-cdr mw)))
     (symbol (dpb 2 (byte 4 28) (mw-car mw)))

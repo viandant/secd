@@ -10,7 +10,7 @@
 (defsystem :secd-tools
     :name "SECD tools"
     :description "Microcode assembler and disassembler tools for the SECD microprocessor"
-    :author "Hans Hübner <hans.huebner@gmail.com>"
+    :author "Hans HÃ¼bner <hans.huebner@gmail.com>"
     :licence "BSD"
 
     :components ((:file "packages")
