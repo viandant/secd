@@ -22,7 +22,8 @@ entity secd_system is
     ram_busy         : in std_logic;
     stop_input       : in std_logic;
     stopped          : out std_logic;
-    state            : out std_logic_vector(1 downto 0)
+    state            : out std_logic_vector(1 downto 0);
+    reg_s            : out std_logic_vector(13 downto 0)
     );
 end;
 
@@ -65,7 +66,8 @@ begin
     ram_write => ram_write,
     opcode    => opcode,
     flags     => flags,
-    state     => state
+    state     => state,
+    reg_s     => reg_s
   );
 
   my_control_unit : entity control_unit port map (

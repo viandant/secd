@@ -93,7 +93,8 @@ package secd_defs is
   constant running    : std_logic_vector(4 downto 0) := "10000";
   constant halted     : std_logic_vector(4 downto 0) := "10001";
   constant gc         : std_logic_vector(4 downto 0) := "10010";
-
+  constant external   : std_logic_vector(4 downto 0) := "10011";
+  
   -- Constant addresses
   constant nil_addr : std_logic_vector := "00000000000000";
   constant t_addr   : std_logic_vector := "00000000000001";

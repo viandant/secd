@@ -21,7 +21,8 @@
                       div
                       rem
                       leq
-                      stop))
+                      stop
+		      external))
 
 (defvar *next-mi-code* '(nil
                          jump
@@ -110,5 +111,6 @@
                     ;; flag status bit manipulation pseudo-ops
                     running
                     halted
-                    gc))
+                    gc
+		    external))
 

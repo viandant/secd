@@ -21,6 +21,7 @@
     rem-ins                                               jump      rem
     leq-ins                                               jump      leq
     stop-ins                                              jump      stop
+    external-ins                                          jump      external
 -------------------------------------------------------------------------------------
     boot            1                         halted      button?   start-program
                                                           jump      boot
@@ -341,6 +342,11 @@
                         car        s                      
                         num        mar
                         s          bidir                  stop
+-------------------------------------------------------------------------------------
+    external                                  external    button?   external-finish
+                                                          jump      external   
+    external-finish     c          mar                    
+                        mem        c                      jump      top-of-cycle
 -------------------------------------------------------------------------------------
     setup-alu-args      s          mar                    
                         mem        x1                     

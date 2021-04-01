@@ -25,7 +25,9 @@ entity datapath is
         -- opcode and flags output to control unit for instruction dispatch
         opcode      : out std_logic_vector(8 downto 0);
         flags       : out flagsunit;
-        state       : out std_logic_vector(1 downto 0)
+        state       : out std_logic_vector(1 downto 0);
+        -- export data stack
+        reg_s       : out std_logic_vector(13 downto 0)
         );
 end datapath;
 
@@ -199,6 +201,9 @@ architecture datapath_arch of datapath is
             when gc =>
               state_reg <= "10";
 
+            when external =>
+              state_reg <= "11";
+
             when others =>
               report "Warning, unsupported ALU operation";
           end case;
@@ -313,5 +318,6 @@ architecture datapath_arch of datapath is
 
     state <= state_reg;
     ram_addr <= mar;
+    reg_s    <= s;
 
   end architecture;
