@@ -295,7 +295,7 @@ architecture datapath_arch of datapath is
 
     ram_rw_gen : process(clk, phi_write, read_sel, write_sel)
     begin
-      if rising_edge(clk) then
+      if falling_edge(clk) then
         if phi_write = '1' then
           -- RAM access
           case write_sel is
