@@ -22,6 +22,20 @@
     leq-ins                                               jump      leq
     stop-ins                                              jump      stop
     external-ins                                          jump      external
+    cmd23-ins                                             jump      stop
+    cmd24-ins                                             jump      stop
+    cmd25-ins                                             jump      stop
+    cmd26-ins                                             jump      stop
+    cmd27-ins                                             jump      stop
+    cmd28-ins                                             jump      stop
+    cmd29-ins                                             jump      stop
+    cmd30-ins                                             jump      stop
+    fork-ins                                              jump      fork
+    fail-ins                                              jump      fail
+    delay-ins                                             jump      stop
+    delay0-ins                                            jump      stop
+    force-ins                                             jump      stop
+	 
 -------------------------------------------------------------------------------------
     boot            1                         halted      button?   start-program
                                                           jump      boot
@@ -31,7 +45,7 @@
     _3                                                    button?   _3
                                                           jump      boot
 -------------------------------------------------------------------------------------
-    start-program       num        mar        running            
+    start-program       num        mar        running
                         mem        car                    
                         car        mar                    
                         mem        s                      
@@ -43,7 +57,8 @@
                         car        c                      
                         nilx       d                      
                         nilx       x1                     
-                        nilx       x2                     
+                        nilx       x2
+                        nilx       r
                         num        mar                    
                         mem        free                   
 -------------------------------------------------------------------------------------
@@ -247,6 +262,45 @@
                         car        c                      
                         d          mar                    
                         mem        d                      jump      top-of-cycle
+-------------------------------------------------------------------------------------
+--- s e (FORK c1 c2 . c) d r -> s e c1 (c.d) (s e c2 (c . d) . r)
+    fork                c          mar
+                        mem        mar
+                        mem        mar
+                        mem        x1
+                        d          x2                     call      consx1x2
+                        mar        d
+                        mar        x1
+                        r          x2                     call      consx1x2
+                        mar        x2
+                        c          mar
+                        mem        mar
+                        mem        mar
+                        mem        car
+                        car        x1                     call      consx1x2
+                        mar        x2
+                        e          x1                     call      consx1x2
+                        mar        x2
+                        s          x1                     call      consx1x2
+                        mar        r
+                        c          mar
+                        mem        mar
+                        mem        car
+                        car        c                      jump      top-of-cycle
+-------------------------------------------------------------------------------------
+    fail                r          mar
+                        mem        car
+                        car        s
+                        mem        mar
+                        mem        car
+                        car        e
+                        mem        mar
+                        mem        car
+                        car        c
+                        mem        mar
+                        mem        car
+                        car        d
+                        mem        r                      jump      top-of-cycle
 -------------------------------------------------------------------------------------
     car                 s          mar                    
                         mem        x2                     

@@ -71,7 +71,8 @@
                       nilx
                       true
                       false
-                      cons))
+                      cons
+							 r))
 
 (defvar *write-regs* '(nil
                        bidir
@@ -90,7 +91,8 @@
                        parent
                        root
                        y1
-                       y2))
+                       y2
+							  r))
 
 (defvar *alu-ops* '(nil
                     dec
