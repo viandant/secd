@@ -345,7 +345,7 @@
 -------------------------------------------------------------------------------------
     external                                  external    button?   external-finish
                                                           jump      external   
-    external-finish     c          mar                    
+    external-finish     c          mar        running
                         mem        c                      jump      top-of-cycle
 -------------------------------------------------------------------------------------
     setup-alu-args      s          mar                    
