@@ -41,6 +41,7 @@ architecture datapath_arch of datapath is
   signal e        : std_logic_vector(13 downto 0) := (others => '0');
   signal c        : std_logic_vector(13 downto 0) := (others => '0');
   signal d        : std_logic_vector(13 downto 0) := (others => '0');
+  signal r        : std_logic_vector(13 downto 0) := (others => '0');
   signal x1       : std_logic_vector(27 downto 14) := (others => '0');
   signal x2       : std_logic_vector(13 downto 0) := (others => '0');
   signal car      : std_logic_vector(13 downto 0) := (others => '0');
@@ -90,6 +91,8 @@ architecture datapath_arch of datapath is
               data_bus(13 downto 0) <= y1;
             when ry2 =>
               data_bus(13 downto 0) <= y2;
+            when rr =>
+              data_bus(13 downto 0) <= r;
               -- 32 Bit registers
             when rbuf1 =>
               data_bus <= buf1;
@@ -238,6 +241,8 @@ architecture datapath_arch of datapath is
               y1 <= data_bus(13 downto 0);
             when wy2 =>
               y2 <= data_bus(13 downto 0);
+            when wr =>
+              r  <= data_bus(13 downto 0);
             -- 32 Bit registers
             when warg =>
               arg <= data_bus;

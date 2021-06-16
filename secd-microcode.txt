@@ -35,7 +35,7 @@
     delay-ins                                             jump      stop
     delay0-ins                                            jump      stop
     force-ins                                             jump      stop
-	 
+
 -------------------------------------------------------------------------------------
     boot            1                         halted      button?   start-program
                                                           jump      boot
@@ -439,6 +439,7 @@
                         e          root                   call      mark-start
                         c          root                   call      mark-start
                         d          root                   call      mark-start
+                        r          root                   call      mark-start
                         x1         root                   call      mark-start
                         x2         root                   call      mark-start
                         nilx       root                   call      mark-start

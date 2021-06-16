@@ -54,6 +54,7 @@ package secd_defs is
   constant rtrue   : std_logic_vector(4 downto 0) := "10101";
   constant rfalse  : std_logic_vector(4 downto 0) := "10110";
   constant rcons   : std_logic_vector(4 downto 0) := "10111";
+  constant rr      : std_logic_vector(4 downto 0) := "11000";
 
   -- Microinstruction register write codes
   constant bidir   : std_logic_vector(4 downto 0) := "00001";
@@ -73,7 +74,8 @@ package secd_defs is
   constant wroot   : std_logic_vector(4 downto 0) := "01111";
   constant wy1     : std_logic_vector(4 downto 0) := "10000";
   constant wy2     : std_logic_vector(4 downto 0) := "10001";
-
+  constant wr      : std_logic_vector(4 downto 0) := "10010";
+  
   -- ALU operations
   constant dec        : std_logic_vector(4 downto 0) := "00001";
   constant add        : std_logic_vector(4 downto 0) := "00010";
