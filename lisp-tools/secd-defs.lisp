@@ -38,7 +38,10 @@
                          button?
                          call
                          return
-                         stop))
+                         stop
+								 forkack?
+								 machine1?
+								 ))
 
 (defvar *flagsunit-bits* '(atom
                            mark
@@ -114,5 +117,8 @@
                     running
                     halted
                     gc
-		    external))
+						  external
+						  fail
+						  forkreq
+						  ))
 

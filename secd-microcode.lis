@@ -264,7 +264,7 @@
 241                          mem        d                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
      --- s e (FORK c1 c2 . c) d r -> s e c1 (c.d) (s e c2 (c . d) . r)
-242      fork                c          mar
+242      serialfork          c          mar
 243                          mem        mar
 244                          mem        mar
 245                          mem        x1
@@ -288,202 +288,222 @@
 263                          mem        car
 264                          car        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-265      fail                r          mar
-266                          mem        car
-267                          car        s
-268                          mem        mar
-269                          mem        car
-270                          car        e
-271                          mem        mar
-272                          mem        car
-273                          car        c
-274                          mem        mar
-275                          mem        car
-276                          car        d
-277                          mem        r                      jump      top-of-cycle
+     --- s e (FORK c1 c2 . c) d r -> s e c1/c2 (c.d) r/nil
+265      parallelfork        c          mar
+266                          mem        mar
+267                          mem        mar
+268                          mem        x1
+269                          d          x2                     call      consx1x2
+270                          mar        d
+271                          c          mar
+272                          mem        mar                    machine1? select-c1
+273                          mem        mar
+274      select-c1           mem        car
+275                          car        c                      machine1? top-of-cycle
+276                          nilx       r                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-278      car                 s          mar                    
-279                          mem        x2                     
-280                          s          mar                    
-281                          mem        car                    
-282                          car        mar                    
-283                          mem        car                    
-284                          car        x1                     call      consx1x2
-285                          mar        s                      
-286                          c          mar                    
-287                          mem        c                      jump      top-of-cycle
+277      fork                                      forkreq     button?   fork-continue
+278                                                            jump      fork      
+279      fork-continue                             running     forkack?  parallelfork
+280                                                            jump      serialfork
      -------------------------------------------------------------------------------------
-288      cdr                 s          mar                    
-289                          mem        x2                     
-290                          s          mar                    
-291                          mem        car                    
-292                          car        mar                    
-293                          mem        x1                     call      consx1x2
-294                          mar        s                      
-295                          c          mar                    
-296                          mem        c                      jump      top-of-cycle
+281      fail                r          mar
+282                          mem        car                    nil?      finalfail
+283                          car        s
+284                          mem        mar
+285                          mem        car
+286                          car        e
+287                          mem        mar
+288                          mem        car
+289                          car        c
+290                          mem        mar
+291                          mem        car
+292                          car        d
+293                          mem        r                      jump      top-of-cycle
+294      finalfail                                 fail        stop
      -------------------------------------------------------------------------------------
-297      atom                s          mar                    
+295      car                 s          mar                    
+296                          mem        x2                     
+297                          s          mar                    
 298                          mem        car                    
 299                          car        mar                    
-300                          mem                               atom?     _24
-301                          false      x1                     jump      _25
-302      _24                 true       x1                     
-303      _25                 s          mar                    
-304                          mem        x2                     call      consx1x2
-305                          mar        s                      
-306                          c          mar                    
-307                          mem        c                      jump      top-of-cycle
+300                          mem        car                    
+301                          car        x1                     call      consx1x2
+302                          mar        s                      
+303                          c          mar                    
+304                          mem        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-308      cons                s          mar                    
-309                          mem        x2                     
-310                          x2         mar                    
-311                          mem        car                    
-312                          car        x2                     
-313                          s          mar                    
-314                          mem        car                    
-315                          car        x1                     call      consx1x2
-316                          mar        x1                     
-317                          s          mar                    
-318                          mem        x2                     
-319                          x2         mar                    
-320                          mem        x2                     call      consx1x2
-321                          mar        s                      
-322                          c          mar                    
-323                          mem        c                      jump      top-of-cycle
+305      cdr                 s          mar                    
+306                          mem        x2                     
+307                          s          mar                    
+308                          mem        car                    
+309                          car        mar                    
+310                          mem        x1                     call      consx1x2
+311                          mar        s                      
+312                          c          mar                    
+313                          mem        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-324      eq                                                    call      setup-alu-args
-325                          mem                               eq?       _28
-326                          false      x1                     jump      _29
-327      _28                 true       x1                     
-328      _29                                                   call      push-alu-result
-329                                                            jump      top-of-cycle
+314      atom                s          mar                    
+315                          mem        car                    
+316                          car        mar                    
+317                          mem                               atom?     _24
+318                          false      x1                     jump      _25
+319      _24                 true       x1                     
+320      _25                 s          mar                    
+321                          mem        x2                     call      consx1x2
+322                          mar        s                      
+323                          c          mar                    
+324                          mem        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-330      add                                                   call      setup-alu-args
-331                          mem        buf1       add         call      alu-gc
-332                          mar        x1                     call      push-alu-result
-333                                                            jump      top-of-cycle
+325      cons                s          mar                    
+326                          mem        x2                     
+327                          x2         mar                    
+328                          mem        car                    
+329                          car        x2                     
+330                          s          mar                    
+331                          mem        car                    
+332                          car        x1                     call      consx1x2
+333                          mar        x1                     
+334                          s          mar                    
+335                          mem        x2                     
+336                          x2         mar                    
+337                          mem        x2                     call      consx1x2
+338                          mar        s                      
+339                          c          mar                    
+340                          mem        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-334      sub                                                   call      setup-alu-args
-335                          mem        buf1       sub         call      alu-gc
-336                          mar        x1                     call      push-alu-result
-337                                                            jump      top-of-cycle
+341      eq                                                    call      setup-alu-args
+342                          mem                               eq?       _28
+343                          false      x1                     jump      _29
+344      _28                 true       x1                     
+345      _29                                                   call      push-alu-result
+346                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-338      mul                                                   call      setup-alu-args
-339                          mem        buf1       mul         call      alu-gc
-340                          mar        x1                     call      push-alu-result
-341                                                            jump      top-of-cycle
+347      add                                                   call      setup-alu-args
+348                          mem        buf1       add         call      alu-gc
+349                          mar        x1                     call      push-alu-result
+350                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-342      div                                                   call      setup-alu-args
-343                          mem        buf1       div         call      alu-gc
-344                          mar        x1                     call      push-alu-result
-345                                                            jump      top-of-cycle
+351      sub                                                   call      setup-alu-args
+352                          mem        buf1       sub         call      alu-gc
+353                          mar        x1                     call      push-alu-result
+354                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-346      rem                                                   call      setup-alu-args
-347                          mem        buf1       rem         call      alu-gc
-348                          mar        x1                     call      push-alu-result
-349                                                            jump      top-of-cycle
+355      mul                                                   call      setup-alu-args
+356                          mem        buf1       mul         call      alu-gc
+357                          mar        x1                     call      push-alu-result
+358                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-350      leq                                                   call      setup-alu-args
-351                          mem                               leq?      _36
-352                          false      x1                     jump      _37
-353      _36                 true       x1                     
-354      _37                                                   call      push-alu-result
-355                                                            jump      top-of-cycle
+359      div                                                   call      setup-alu-args
+360                          mem        buf1       div         call      alu-gc
+361                          mar        x1                     call      push-alu-result
+362                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-356      stop                s          mar                    
-357                          mem        car                    
-358                          car        s                      
-359                          num        mar
-360                          s          bidir                  stop
+363      rem                                                   call      setup-alu-args
+364                          mem        buf1       rem         call      alu-gc
+365                          mar        x1                     call      push-alu-result
+366                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-361      external                                  external    button?   external-finish
-362                                                            jump      external   
-363      external-finish     c          mar        running
-364                          mem        c                      jump      top-of-cycle
+367      leq                                                   call      setup-alu-args
+368                          mem                               leq?      _36
+369                          false      x1                     jump      _37
+370      _36                 true       x1                     
+371      _37                                                   call      push-alu-result
+372                                                            jump      top-of-cycle
      -------------------------------------------------------------------------------------
-365      setup-alu-args      s          mar                    
-366                          mem        x1                     
-367                          x1         mar                    
-368                          mem        car                    
-369                          car        mar                    
-370                          mem        arg                    
-371                          s          mar                    
-372                          mem        car                    
-373                          car        mar                    return    
+373      stop                s          mar                    
+374                          mem        car                    
+375                          car        s                      
+376                          num        mar
+377                          s          bidir                  stop
      -------------------------------------------------------------------------------------
-374      push-alu-result     s          mar                    
-375                          mem        x2                     
-376                          x2         mar                    
-377                          mem        x2                     call      consx1x2
-378                          mar        s                      
-379                          c          mar                    
-380                          mem        c                      return    
+378      external                                  external    button?   external-finish
+379                                                            jump      external   
+380      external-finish     c          mar        running
+381                          mem        c                      jump      top-of-cycle
      -------------------------------------------------------------------------------------
-381      consx1x2            free                              num?      cons-gc
-382      _42                 free       mar                    
-383                          mem        free                   
-384                          cons       bidir                  return    
+382      setup-alu-args      s          mar                    
+383                          mem        x1                     
+384                          x1         mar                    
+385                          mem        car                    
+386                          car        mar                    
+387                          mem        arg                    
+388                          s          mar                    
+389                          mem        car                    
+390                          car        mar                    return    
      -------------------------------------------------------------------------------------
-385      cons-gc                                               call      gc
-386                                                            jump      _42
+391      push-alu-result     s          mar                    
+392                          mem        x2                     
+393                          x2         mar                    
+394                          mem        x2                     call      consx1x2
+395                          mar        s                      
+396                          c          mar                    
+397                          mem        c                      return    
      -------------------------------------------------------------------------------------
-387      alu-gc              free                              num?      _46
-388      _45                 free       mar                    
-389                          mem        free                   
-390                          buf1       bidir                  return    
-391      _46                                                   call      gc
-392                                                            jump      _45
+398      consx1x2            free                              num?      cons-gc
+399      _42                 free       mar                    
+400                          mem        free                   
+401                          cons       bidir                  return    
      -------------------------------------------------------------------------------------
-393      gc                  s          root       gc          call      mark-start
-394                          e          root                   call      mark-start
-395                          c          root                   call      mark-start
-396                          d          root                   call      mark-start
-397                          r          root                   call      mark-start
-398                          x1         root                   call      mark-start
-399                          x2         root                   call      mark-start
-400                          nilx       root                   call      mark-start
-401                          true       root                   call      mark-start
-402                          false      root                   call      mark-start
-403                          num        free
-404                          num        arg                    
-405                                     buf2       dec
-406                          buf2       mar
-407      _48                 arg                               nil?      _51
-408                          mem        arg                    mark?     _49
-409                          free       bidir                  
-410                          mar        free                   jump      _50
-411      _49                            buf2       clear-mark
-412                          buf2       bidir
-413      _50                 mar        arg                    
-414                                     buf2       dec
-415                          buf2       mar                    jump      _48
-416      _51                 free                              num?      error
-417                                                running     return    
+402      cons-gc                                               call      gc
+403                                                            jump      _42
      -------------------------------------------------------------------------------------
-418      mark-start          nilx       parent                 
-419      mark                root       mar                    
-420                          mem        arg                    mark?     backup            
-421                                     buf2       set-mark
-422                          buf2       bidir                  atom?     backup
-423                          parent     y1
-424                          root       y2
-425                                                gcmark      
-426                          buf2       bidir                  jump      mark
+404      alu-gc              free                              num?      _46
+405      _45                 free       mar                    
+406                          mem        free                   
+407                          buf1       bidir                  return    
+408      _46                                                   call      gc
+409                                                            jump      _45
      -------------------------------------------------------------------------------------
-427      backup              parent     mar                    nil?      _56
-428                          mem        arg                    field?    _55
+410      gc                  s          root       gc          call      mark-start
+411                          e          root                   call      mark-start
+412                          c          root                   call      mark-start
+413                          d          root                   call      mark-start
+414                          r          root                   call      mark-start
+415                          x1         root                   call      mark-start
+416                          x2         root                   call      mark-start
+417                          nilx       root                   call      mark-start
+418                          true       root                   call      mark-start
+419                          false      root                   call      mark-start
+420                          num        free
+421                          num        arg                    
+422                                     buf2       dec
+423                          buf2       mar
+424      _48                 arg                               nil?      _51
+425                          mem        arg                    mark?     _49
+426                          free       bidir                  
+427                          mar        free                   jump      _50
+428      _49                            buf2       clear-mark
+429                          buf2       bidir
+430      _50                 mar        arg                    
+431                                     buf2       dec
+432                          buf2       mar                    jump      _48
+433      _51                 free                              num?      error
+434                                                running     return    
+     -------------------------------------------------------------------------------------
+435      mark-start          nilx       parent                 
+436      mark                root       mar                    
+437                          mem        arg                    mark?     backup            
+438                                     buf2       set-mark
+439                          buf2       bidir                  atom?     backup
+440                          parent     y1
+441                          root       y2
+442                                                gcmark      
+443                          buf2       bidir                  jump      mark
+     -------------------------------------------------------------------------------------
+444      backup              parent     mar                    nil?      _56
+445                          mem        arg                    field?    _55
      
      --- reset parents cdr, then backup
      
-429                          root       y1
-430                          parent     y2
-431                                                gcreset
-432                          buf2       bidir                  jump      backup
+446                          root       y1
+447                          parent     y2
+448                                                gcreset
+449                          buf2       bidir                  jump      backup
      
      --- reset parent's car, then reverse parents cdr
      
-433      _55                 root       y2
-434                                                gcreverse
-435                          buf2       bidir                  jump      mark
-436      _56                                                   return
+450      _55                 root       y2
+451                                                gcreverse
+452                          buf2       bidir                  jump      mark
+453      _56                                                   return

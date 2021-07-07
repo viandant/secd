@@ -3,6 +3,7 @@
 (defvar *empty-stream* (make-broadcast-stream))
 
 (defun load-microcode (filename)
+  "Load SECD microcode from FILENAME into *MICROCODE*"
   (reset)
   (with-open-file (input filename)
 	 (with-open-stream (*error-output* (make-synonym-stream '*standard-output*))
@@ -11,6 +12,12 @@
 	 ))
 
 (defun addr-sexp (addr &optional (visited nil))
+  "Return the S-expression starting at address ADDR of SECD-memory *MEMORY*
+and an alist with all addresses visited mapped to their S-expressions.
+VISITED is an alist mapping addresses to S-expressions, which should contain
+all addresses visited when this function is called recursively.
+If ADDR is found in VISITED the corresponding S-expression is returned as the result.
+VISITED allows to handle cyclic structures."
   (if (null addr) (values 'none visited)
 		(let ((mw (read-mem addr)))
 		  (case (mw-type mw)
@@ -35,6 +42,7 @@
   )
 
 (defun print-sc ()
+  "Print the S and C register."
   (let ((*print-circle* t))
 	 (format t "s: ~A~%c: ~A~%"
 				(addr-sexp (gethash 's *regs*))
@@ -71,16 +79,69 @@
 (defun secd-step ()
   (execute-next)
   (do ((mi (aref *microcode* *mpc*) (aref *microcode* *mpc*)))
-		((or *stopped* (eql (mi-label mi)  'top-of-cycle)) mi)
+		((or *stopped*
+			  (not (eql *state* :running))
+			  (eql (mi-label mi)  'top-of-cycle)) mi)
 	 (execute-next))
   (funcall *secd-step-post-hook*))
+
+(defun get-running ()
+  (do () ((eql *state* :running))
+	 (execute-next)))
 
 (defun run ()
   (do () (*stopped*) (secd-step)))
 
+(defun run-with-forks ()
+  (do () ((or *stopped* (eql *state* :failed)))
+	 (case *state*
+		((:running :halted)
+		 (secd-step))
+		((:gc :idle :external)
+		 (error "Reached state ~A which this simulation currently cannot handle."
+				  *state*))
+		(:fork-requested
+		 (format t "> Fork requested~%")
+		 (multiple-value-bind
+				 (regs mpc stack state stopped memory machine)
+			  (let
+					((*regs*
+						(let ((new-hash (make-hash-table)))
+						  (maphash (lambda (key value) (setf (gethash key new-hash) value)) *regs*)
+						  new-hash
+						  ))
+					 (*mpc* *mpc*)
+					 (*stack* (copy-seq *stack*))
+					 (*state* *state*)
+					 (*stopped* *stopped*)
+					 (*memory* (copy-seq *memory*))
+					 (*machine* :machine1))
+				 (get-running)
+				 (run-with-forks)
+				 (values *regs* *mpc* *stack* *state* *stopped* *memory* *machine*))
+			(format t "> Left fork branch finished with state ~A.~%" state)
+			(if (eql state :failed)
+				 (let ((*machine* :machine2))
+					(get-running)
+					(run-with-forks)
+					(format t "> Right fork branch finished with state ~A.~%" *state*)
+					)
+				 (setq *regs* regs
+						 *mpc* mpc
+						 *stack* stack
+						 *state* state
+						 *stopped* stopped
+						 *memory* memory)
+				 )
+			)
+		 )
+		)
+	 )
+  )
+
 ;; Abbreviations
 (defun st () (secd-step))
-
+  
 (defun secd-debug-loop ()
   (do ((stop nil))
 		(stop)

@@ -29,7 +29,7 @@
 	 ;; Note #'/ returns a rational number. We need an integer
 	 (div (mw-number-op2 #'floor databus (gethash 'arg regs)))
 	 (rem (mw-number-op2 #'rem databus (gethash 'arg regs))) 
-
+	 
 	 (replcar
 	  (let ((arg (gethash 'arg regs)))
 		 (make-memory-word
@@ -130,13 +130,13 @@
 		 )
 	  )
 
-	 (stop     (setf *state* :stopped))    ;; stopped == 1
-	 (running  (setf *state* :running))    ;; state_reg == "00"
-	 (external (setf *state* :external))   ;; state_reg == "11"
-	 (gc       (setf *state* :gc))         ;; state_reg == "10"
-	 (halted   (setf *state* :halted))     ;; state_reg == "01"
+	 ;;(stop     (setf *state* :stopped))    ;; stopped == 1
+	 (running  (setf *state* :running))    ;; state_reg == "000"
+	 (external (setf *state* :external))   ;; state_reg == "011"
+	 (gc       (setf *state* :gc))         ;; state_reg == "010"
+	 (halted   (setf *state* :halted))     ;; state_reg == "001"
 	 (idle     (setf *state* :idle))       ;; not yet used
-	 (fail     (setf *state* :failed))     ;; not yet used
-	 (fork     (setf *state* :fork-requested)) ;; not yet used
+	 (fail     (setf *state* :failed))     ;; state_reg == "101"
+	 (forkreq  (setf *state* :fork-requested)) ;; state_reg == "100"
 	 )
   )

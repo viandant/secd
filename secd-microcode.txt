@@ -264,7 +264,7 @@
                         mem        d                      jump      top-of-cycle
 -------------------------------------------------------------------------------------
 --- s e (FORK c1 c2 . c) d r -> s e c1 (c.d) (s e c2 (c . d) . r)
-    fork                c          mar
+    serialfork          c          mar
                         mem        mar
                         mem        mar
                         mem        x1
@@ -288,8 +288,27 @@
                         mem        car
                         car        c                      jump      top-of-cycle
 -------------------------------------------------------------------------------------
+--- s e (FORK c1 c2 . c) d r -> s e c1/c2 (c.d) r/nil
+    parallelfork        c          mar
+                        mem        mar
+                        mem        mar
+                        mem        x1
+                        d          x2                     call      consx1x2
+                        mar        d
+                        c          mar
+                        mem        mar                    machine1? select-c1
+                        mem        mar
+    select-c1           mem        car
+                        car        c                      machine1? top-of-cycle
+                        nilx       r                      jump      top-of-cycle
+-------------------------------------------------------------------------------------
+    fork                                      forkreq     button?   fork-continue
+                                                          jump      fork      
+    fork-continue                             running     forkack?  parallelfork
+                                                          jump      serialfork
+-------------------------------------------------------------------------------------
     fail                r          mar
-                        mem        car
+                        mem        car                    nil?      finalfail
                         car        s
                         mem        mar
                         mem        car
@@ -301,6 +320,7 @@
                         mem        car
                         car        d
                         mem        r                      jump      top-of-cycle
+    finalfail                                 fail        stop
 -------------------------------------------------------------------------------------
     car                 s          mar                    
                         mem        x2                     

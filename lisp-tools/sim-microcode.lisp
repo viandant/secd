@@ -6,6 +6,7 @@
 (defvar *stack* nil)
 (defvar *state* :running) ;; Initial value of state_reg is "00" ( = :running)
 (defvar *stopped* nil)    ;; Initial value of vhd variable stopped is not explicitely set
+(defvar *machine* :machine1) ;; This machine that takes the first choice for the fork function
 
 
 (defconstant *content-bits* 28) ;; size of car and cdr field together, or size of integer or symbol
@@ -17,6 +18,7 @@
   (setf *regs* (make-hash-table))
   (setf *stack* nil)
   (setf *stopped* nil)
+  (setf *state* :running)
   )
 
 (defun read-reg (name)
@@ -108,6 +110,9 @@
 								(mi-a mi) (1+ *mpc*)))
 				(atom?  (if (not (eql (mw-type databus) 'cons))
 								(mi-a mi) (1+ *mpc*)))
+				(machine1? (if (eql *machine* :machine1)
+									(mi-a mi) (1+ *mpc*)))
+				(forkack?  (mi-a mi))
 				(dispatch
 				 (format t "arg = ~S~%" (gethash 'arg *regs*))
 				 (mw-car (gethash 'arg *regs*)))
